@@ -18,6 +18,8 @@ private void getImDetailsFor(String phoneNumber)
         
         //Data.CONTENT_URI is the master URI to get all contact data
         //Send the Im.CONTACT_ID and Data.MIMETYPE
+        //Check : http://developer.android.com/reference/android/content/ContentResolver.html#query%28android.net.Uri,%20java.lang.String[],%20java.lang.String,%20java.lang.String[],%20java.lang.String%29
+        
         Cursor pCur = cr.query(
        		 Data.CONTENT_URI, 
        		 null, 
