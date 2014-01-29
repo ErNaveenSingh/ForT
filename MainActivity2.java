@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
+import android.R.integer;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -36,10 +37,15 @@ public class MainActivity2 extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				animate();
-//				a.setDuration(1500);
-//				myImageView.startAnimation(a);
-//				animate2();
+				animate(100,100,200,200);
+			}
+		});
+        ((Button)findViewById(R.id.myButton2)).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				animate(-100, -100, 800, 800);
 			}
 		});
 
@@ -65,10 +71,10 @@ public class MainActivity2 extends Activity {
         set.start();
 	}
     
-    public void animate() {
+    public void animate(int left, int top, int width, int height) {
     	final RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) myImageView.getLayoutParams();
     	final LayoutParams params2 =  myImageView.getLayoutParams();
-    	ValueAnimator animation = ValueAnimator.ofInt(params.leftMargin, 200);
+    	ValueAnimator animation = ValueAnimator.ofInt(params.leftMargin, left);
     	animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
     	    @Override
     	    public void onAnimationUpdate(ValueAnimator valueAnimator)
@@ -77,7 +83,7 @@ public class MainActivity2 extends Activity {
     	        myImageView.setLayoutParams(params);
     	    }
     	});
-    	ValueAnimator animation2 = ValueAnimator.ofInt(params.topMargin, 200);
+    	ValueAnimator animation2 = ValueAnimator.ofInt(params.topMargin, top);
     	animation2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
     	    @Override
     	    public void onAnimationUpdate(ValueAnimator valueAnimator)
@@ -86,7 +92,7 @@ public class MainActivity2 extends Activity {
     	        myImageView.setLayoutParams(params);
     	    }
     	});
-    	ValueAnimator animation3 = ValueAnimator.ofInt(params2.height, 300);
+    	ValueAnimator animation3 = ValueAnimator.ofInt(params2.height, height);
     	animation3.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
     	    @Override
     	    public void onAnimationUpdate(ValueAnimator valueAnimator)
@@ -95,7 +101,7 @@ public class MainActivity2 extends Activity {
     	        myImageView.setLayoutParams(params);
     	    }
     	});
-    	ValueAnimator animation4 = ValueAnimator.ofInt(params2.width, 300);
+    	ValueAnimator animation4 = ValueAnimator.ofInt(params2.width, width);
     	animation4.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
     	    @Override
     	    public void onAnimationUpdate(ValueAnimator valueAnimator)
