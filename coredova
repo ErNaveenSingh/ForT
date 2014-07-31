@@ -1,0 +1,28 @@
+
+You can create a new class DroidGapWithPost
+
+class DroidGapWithPost extends DroidGap{
+
+	//This method is same as loadUrl but has been changed to use postUrl
+	public void loadPostUrl(String url, byte[] postData) {
+
+        // Init web view if not already done
+        if (this.appView == null) {
+            this.init();
+        }
+
+        // Set backgroundColor
+        this.backgroundColor = this.getIntegerProperty("backgroundColor", Color.BLACK);
+        this.root.setBackgroundColor(this.backgroundColor);
+
+        // If keepRunning
+        this.keepRunning = this.getBooleanProperty("keepRunning", true);
+
+        // Then load the spinner
+        this.loadSpinner();
+
+        this.appView.postUrl(url, postData);
+    }
+}
+
+Now extend your activity with DroidGapWithPost class and use method loadPostUrl instead of loadUrl
