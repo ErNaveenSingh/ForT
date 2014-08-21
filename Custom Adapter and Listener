@@ -1,0 +1,48 @@
+
+	public interface MyCheckboxClickListener {
+		public void checkBoxCheckedWithValue(Boolean isChecked, String value);
+	}
+
+
+public class MyListAdapter extends BaseAdapter {
+
+  MyCheckboxClickListener myCheckboxClickListener;
+  
+  public MyListAdapter(Context context, MyCheckboxClickListener myCheckboxClickListener) {
+    this.myCheckboxClickListener = myCheckboxClickListener;
+	}
+	
+	public View getView(int position, View convertView, ViewGroup parent){
+	
+	//....all other code
+	
+	abcCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			// TODO Auto-generated method stub
+			myCheckboxClickListener.checkBoxCheckedWithValue(isChecked, "set your value");
+		}
+	});
+	
+	}
+}
+
+		
+		///Now for using this 
+		
+		public class ABCActivity extends Activity implements MyCheckboxClickListener{
+		  
+		  @Override
+		  public void onCreate(Bundle savedInstanceState) {
+		  
+		    MyListAdapter myListAdapter = new MyListAdapter(this, this);
+		  
+		  }
+		  
+		  @Override
+		  public void checkBoxCheckedWithValue(Boolean isChecked, String value){
+		  
+		  }
+		}
+		
