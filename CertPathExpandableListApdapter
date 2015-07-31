@@ -1,0 +1,148 @@
+package com.tcs.ievolve.certifications;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.tcs.ievolve.certifications.Beans.CertPathModuleBean;
+import com.tcs.ievolve.certifications.Beans.CertPathModuleExamBean;
+import com.tcs.ievolve.effectivenavigation.R;
+
+import android.content.Context;
+import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+public class CertPathExpandableListApdapter extends BaseExpandableListAdapter {
+	ArrayList<CertPathModuleBean> certPathModulelist;
+	private Context context = null;
+	public HashMap<Integer, List<CertPathModuleExamBean>> _listDataChild = 
+            new HashMap<Integer, List<CertPathModuleExamBean>>();
+	public CertPathExpandableListApdapter(FragmentActivity fragmentActivity,ArrayList<CertPathModuleBean> certPathModulelist){
+      this.certPathModulelist= certPathModulelist;
+      this.context = fragmentActivity;
+	}
+
+	@Override
+	public Object getChild(int groupPosition, int childPosition) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public long getChildId(int groupPosition, int childPosition) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public View getChildView(int groupPosition, final int childPosition,
+			boolean isLastChild, View convertView, ViewGroup parent) {
+		
+		// TODO Auto-generated method stub
+		System.out.println("Child view Called");
+		View view = convertView;
+
+		if (view == null) {
+			view = LayoutInflater.from(context).inflate(
+					R.layout.path_module_exam, parent, false);
+			TextView exam_title = (TextView) view.findViewById(R.id.exam_title);
+			TextView exam_status = (TextView) view.findViewById(R.id.exam_status);
+			TextView exam_type = (TextView) view.findViewById(R.id.exam_type);
+			TextView exam_list_price = (TextView) view.findViewById(R.id.exam_list_price);
+			
+			List<CertPathModuleExamBean> exam_list= _listDataChild.get("10303");
+			
+			exam_title.setText(exam_list.get(childPosition).getExam_name());
+			exam_status.setText(exam_list.get(childPosition).getExam_status());
+			exam_type.setText(exam_list.get(childPosition).getExam_type());
+			exam_list_price.setText(exam_list.get(childPosition).getExam_list_price());
+		}
+     
+		
+		return view;
+	}
+
+	@Override
+	public int getChildrenCount(int groupPosition) {
+		// TODO Auto-generated method stub
+		List<CertPathModuleExamBean> exam_list= _listDataChild.get("10303");
+		if(exam_list==null)
+		return 0;
+		else
+		{
+			System.out.println("Child view count" +exam_list.size());
+		return exam_list.size();
+		}
+	}
+
+	@Override
+	public Object getGroup(int arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getGroupCount() {
+		// TODO Auto-generated method stub
+		return certPathModulelist.size();
+	}
+
+	@Override
+	public long getGroupId(int arg0) {
+		// TODO Auto-generated method stub
+		return Integer.parseInt(certPathModulelist.get(arg0).getModule_id());
+	}
+
+	@Override
+	public View getGroupView(int groupPosition, boolean isExpanded,
+			View convertView, ViewGroup parent) {
+		// TODO Auto-generated method stub
+		//Log.i("logger", "in adapter group view");
+
+		View view = convertView;
+		TextView text = null;
+		ImageView img_selection;
+
+		if (view == null) {
+			view = LayoutInflater.from(context).inflate(
+					R.layout.certmodule_expandable_list_group_view, parent, false);
+		}
+
+		text = (TextView) view.findViewById(R.id.groupHeader);
+		img_selection = (ImageView) view.findViewById(R.id.imageView1);
+
+		int imageResourceId = isExpanded ? R.drawable.img_up_arrow
+				: R.drawable.img_dwn_arrow;
+		img_selection.setImageResource(imageResourceId);
+		img_selection.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+
+		text.setText(certPathModulelist.get(groupPosition).getModule_name());
+
+		return view;
+	}
+
+	@Override
+	public boolean hasStableIds() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isChildSelectable(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+}
