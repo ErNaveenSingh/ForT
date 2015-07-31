@@ -1,0 +1,270 @@
+package com.tcs.ievolve.certifications;
+
+import java.util.ArrayList;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.example.android.Learning.LearningApplication;
+import com.example.android.effectivenavigation.connection.ActivityLifecycleCallback;
+import com.example.android.effectivenavigation.connection.ConnectionManager;
+import com.example.android.effectivenavigation.constantvalue.Constant;
+import com.example.android.effectivenavigation.constantvalue.UltimatixTouchBaseHttpRequestHandler;
+import com.tcs.ievolve.Utils.Utility;
+import com.tcs.ievolve.certifications.Beans.CertPathModuleBean;
+import com.tcs.ievolve.certifications.Beans.CertPathModuleExamBean;
+import com.tcs.ievolve.competencies.MyCompetencies;
+import com.tcs.ievolve.effectivenavigation.NotificationActivity;
+import com.tcs.ievolve.effectivenavigation.R;
+import com.tcs.ievolve.effectivenavigation.ViewUtils;
+
+public class CertificationDetailPath extends FragmentActivity
+		implements
+		UltimatixTouchBaseHttpRequestHandler.HttpRequestHandlerCompletedListener {
+
+	protected ActivityLifecycleCallback app;
+	private String httpErrorMessage;
+	private int Path_ID = 8356;
+	private int Cert_ID = 8111;
+	ExpandableListView expandableModulesList;
+	CertPathExpandableListApdapter certPathAdapter;
+    int expandedGroupPosition;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.certdetailpath);
+		getWindow().getDecorView().setBackgroundColor(Color.WHITE);
+		this.app = ((ActivityLifecycleCallback) getApplication());
+		expandableModulesList = (ExpandableListView) findViewById(R.id.expandableModulesList);
+		new GetCertPathDetails().execute(Constant.GET_CERT_PATH_MODULES_URL);
+	
+	}
+
+	private class GetCertPathDetails extends
+			AsyncTask<String, Void, ArrayList<CertPathModuleBean>> {
+
+		ProgressDialog pgr;
+		ConnectionManager connMgr = new ConnectionManager(
+				CertificationDetailPath.this);
+
+		ArrayList<CertPathModuleBean> certDetailBean;
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			pgr = Utility.showProgressDialog(CertificationDetailPath.this);
+			super.onPreExecute();
+		}
+
+		@Override
+		protected ArrayList<CertPathModuleBean> doInBackground(String... params) {
+			String responseData;
+			responseData = connMgr.fetchCertificationsPathDetails(params[0],
+					CertificationDetailPath.this.Cert_ID,
+					CertificationDetailPath.this.Path_ID);
+
+			if (responseData != null
+					&& connMgr.isValidJSONResponse(responseData)) {
+				CertificationParsing parse = new CertificationParsing();
+				certDetailBean = parse.parsecertPathData(responseData);
+				System.out.println("Size of certDetailBean"
+						+ certDetailBean.size());
+			} else {
+				Log.e("logger", "Held Comp resp. null or invalid");
+			}
+
+			return certDetailBean;
+		}
+
+		@Override
+		protected void onPostExecute(ArrayList<CertPathModuleBean> result) {
+			// TODO Auto-generated method stub
+			if (result != null)
+				setExpandableListAdapter(result);
+
+			pgr.dismiss();
+			super.onPostExecute(result);
+		}
+	}
+
+	public void setExpandableListAdapter(ArrayList<CertPathModuleBean> result) {
+		certPathAdapter = new CertPathExpandableListApdapter(
+				CertificationDetailPath.this, result);
+		expandableModulesList
+				.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+
+					@Override
+					public boolean onGroupClick(ExpandableListView arg0,
+							View arg1, int groupposition, long id) {
+						// TODO Auto-generated method stub
+						if (certPathAdapter._listDataChild.get(10303) == null) {
+							// Fetch list of children for group "grpPos"
+							new GetPathModuleExamList().execute(Constant.GET_PATH_MODULE_EXAM);
+							// Add the children to your adapters HashMap
+							CertificationDetailPath.this.expandedGroupPosition=groupposition;
+						}
+						return false;
+					}
+				});
+		expandableModulesList.setAdapter(certPathAdapter);
+	}
+
+	private class GetPathModuleExamList extends
+			AsyncTask<String, Void, ArrayList<CertPathModuleExamBean>> {
+
+		ProgressDialog pgr;
+		ConnectionManager connMgr = new ConnectionManager(
+				CertificationDetailPath.this);
+
+		ArrayList<CertPathModuleExamBean> certpathModuleBean;
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			pgr = Utility.showProgressDialog(CertificationDetailPath.this);
+			super.onPreExecute();
+		}
+
+		@Override
+		protected ArrayList<CertPathModuleExamBean> doInBackground(String... params) {
+			String responseData;
+			responseData = connMgr.fetchPathModuleExamDetails(params[0],
+					10303);
+
+			if (responseData != null
+					&& connMgr.isValidJSONResponse(responseData)) {
+				CertificationParsing parse = new CertificationParsing();
+				certpathModuleBean = parse.parsecertPathModuleExamData(responseData);
+				System.out.println("Size of Children in Module"
+						+ certpathModuleBean.size());
+			} else {
+				Log.e("logger", "Held Comp resp. null or invalid");
+			}
+
+			return certpathModuleBean;
+		}
+
+		@Override
+		protected void onPostExecute(ArrayList<CertPathModuleExamBean> result) {
+			// TODO Auto-generated method stub
+			if (result != null)
+			{
+				certPathAdapter._listDataChild.put(10303,result );
+				
+				certPathAdapter.notifyDataSetChanged();
+				//expandableModulesList.expandGroup(CertificationDetailPath.this.expandedGroupPosition, true);
+				certPathAdapter.notifyDataSetInvalidated();
+				expandableModulesList.invalidate();
+				
+			}
+
+			pgr.dismiss();
+			super.onPostExecute(result);
+		}
+	}
+
+
+	public void onHttpRequestError(String paramString, int paramInt) {
+		// TODO Auto-generated method stub
+		callHttpErrorHandling(paramString, paramInt);
+	}
+
+	@Override
+	public void onHttpRequestHandlerCompleted(Object paramObject, int paramInt) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void callHttpErrorHandling(String paramString, int paramInt) {
+
+		if (paramString == null || "".equalsIgnoreCase(paramString)) {
+			this.httpErrorMessage = getString(R.string.default_http_error_message);
+		} else {
+			this.httpErrorMessage = paramString;
+		}
+		switch (paramInt) {
+		case 401:
+			this.httpErrorMessage = getString(R.string.http_session_expired_error_message);
+			break;
+		case 404:
+			this.httpErrorMessage = getString(R.string.not_found_error);
+			break;
+		case 407:
+			this.httpErrorMessage = getString(R.string.proxy_settings_error);
+			break;
+		case 408:
+			this.httpErrorMessage = getString(R.string.request_timeout_error);
+			break;
+		case 500:
+			this.httpErrorMessage = getString(R.string.default_http_error_message);
+			break;
+		case 503:
+			this.httpErrorMessage = getString(R.string.not_found_error);
+			break;
+		default:
+			this.httpErrorMessage = getString(R.string.default_http_error_message);
+			break;
+		}
+
+		runOnUiThread(new Runnable() {
+			public void run() {
+				Toast.makeText(
+						CertificationDetailPath.this.getApplicationContext(),
+						CertificationDetailPath.this.httpErrorMessage, 0)
+						.show();
+			}
+		});
+
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		Log.i("Startactivity", "inside onresume method*************");
+		this.app = ((ActivityLifecycleCallback) getApplication());
+		((LearningApplication) getApplication()).setApplicationStarted(true);
+		this.app.onActivityResumed(this);
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		this.app.onActivityDestroyed(this);
+	}
+
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		Log.i("Startactivity", "inside onstart method*************");
+		this.app.onActivityStarted(this);
+	}
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		Log.i("Startactivity", "inside onstop method*************");
+		this.app.onActivityStopped(this);
+	}
+
+
+
+}
