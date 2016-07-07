@@ -145,3 +145,66 @@ public class DownloadActivity extends AppCompatActivity {
     }
 
 }
+
+
+Add this code in Manifest
+
+<provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.tcs.downloadapp.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+        
+Add this code to filepaths.xml
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <files-path name="ektafiles" />
+</paths>
+
+
+xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.tcs.downloadapp.DownloadActivity">
+
+
+
+    <Button
+        android:id="@+id/downloadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Download"/>
+
+    <Button
+        android:id="@+id/filepath"
+        android:layout_below="@id/downloadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FilePath"/>
+    <ImageView
+        android:id="@+id/fileimage"
+        android:layout_width="wrap_content"
+        android:layout_below="@id/filepath"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher"/>
+</RelativeLayout>
+
+        
+        
+        
+        
+        
+        
